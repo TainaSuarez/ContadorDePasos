@@ -8,8 +8,7 @@ import kotlinx.coroutines.*
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.aggregate.AggregateMetric
-import androidx.health.connect.client.aggregate.AggregateRecordsRequest
+import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.records.StepsRecord
 import androidx.health.connect.client.time.TimeRangeFilter
 
@@ -19,28 +18,32 @@ class MainActivity : FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler { call, result ->
-            when (call.method) {
-                "getpasos24h" -> obtenerPasos(result)
-                else -> result.notImplemented()
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
+            call, result ->
+            if (call.method == "getpasos24h") {
+                obtenerPasos(result)
+            } else {
+                result.notImplemented()
             }
         }
     }
 
     private fun obtenerPasos(result: MethodChannel.Result) {
+        val client = HealthConnectClient.getOrCreate(this)
+
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                val client = HealthConnectClient.getOrCreate(this@MainActivity)
                 val end = Instant.now()
                 val start = end.minus(24, ChronoUnit.HOURS)
 
-                val request = AggregateRecordsRequest(
-                    metrics = setOf(StepsRecord.COUNT_TOTAL),
-                    timeRangeFilter = TimeRangeFilter.between(start, end)
-                )
+                val response = client.aggregate(
+    AggregateRequest(
+        metrics = setOf(StepsRecord.COUNT_TOTAL),
+        timeRangeFilter = TimeRangeFilter.between(start, end)
+    )
+)
 
-                val response = client.aggregate(request)
-                val totalPasos = response[StepsRecord.COUNT_TOTAL] ?: 0
+val totalPasos = response[StepsRecord.COUNT_TOTAL] ?: 0
 
                 val data = mapOf(
                     "cantidad_pasos" to totalPasos,
