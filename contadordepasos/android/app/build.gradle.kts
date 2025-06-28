@@ -34,10 +34,11 @@ android {
     }
 }
 
-
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
     implementation("androidx.health.connect:connect-client:1.1.0-alpha05")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.appcompat:appcompat:1.6.1")
 }
 
 flutter {

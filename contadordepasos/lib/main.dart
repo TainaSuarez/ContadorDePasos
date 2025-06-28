@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => PasosViewmodel(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Contador de Pasos',
         theme: ThemeData(
           primarySwatch: Colors.indigo,
