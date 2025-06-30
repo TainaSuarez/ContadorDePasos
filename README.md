@@ -114,7 +114,7 @@ flutter pub get
 ### 3. Error de Datos - Problema del Emulador
 ![Error de Datos](capturas/no%20salva%20los%20pasos.PNG)
 
-**Explicación**: Esta pantalla muestra el mensaje de error "No se pudieron obtener los datos de pasos". Esto ocurre porque:
+**Explicación**: Esta pantalla demuestra que no se almaceno ninguna informacion, apesar de haber hecho la simulacion de pasos.
 - El emulador no simula sensores de movimiento
 - No hay datos reales de pasos disponibles
 - La aplicación no puede registrar actividad física simulada
