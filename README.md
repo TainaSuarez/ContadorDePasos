@@ -28,7 +28,7 @@ El emulador del reloj inteligente no estaba simulando los pasos correctamente, p
 - La conexión entre dispositivos se estableció sin problemas
 - **Estado**: ✅ Configuración correcta
 
-### Paso 2: Aplicación Funcionando con Datos Simulados
+### Paso 2: Aplicación Funcionando
 ![Pantalla Principal](capturas/Pantalla%20contador%20de%20pasos.PNG)
 
 **Explicación del Paso 2:**
@@ -51,7 +51,7 @@ El emulador del reloj inteligente no estaba simulando los pasos correctamente, p
 
 **Explicación del Paso 4:**
 - Como resultado de la falla en la emulación de sensores
-- La aplicación no puede obtener datos reales de pasos
+- La aplicación de Health Connect no puede guardar los datos de los pasos, por ende la app en flutter no muestra informacion de los pasos.
 - Se muestra el mensaje de error "No se pudieron obtener los datos de pasos"
 - **Estado**: ❌ Error final debido a limitaciones del emulador
 
@@ -99,11 +99,12 @@ flutter pub get
 ### 1. Pantalla Principal - Aplicación Funcionando
 ![Pantalla Principal](capturas/Pantalla%20contador%20de%20pasos.PNG)
 
-**Explicación**: Esta captura muestra la aplicación funcionando correctamente con datos simulados. La interfaz incluye:
+**Explicación**: Esta captura muestra la aplicación funcionando correctamente. La interfaz incluye:
 - Contador principal de pasos
 - Gráfico de distribución horaria
 - Botón de actualización
 - Diseño moderno en tonos índigo
+  Obs: algunos aspectos apenas son visibles con la informacion de los pasos.
 
 ### 2. Configuración de Permisos - Emparejamiento Correcto
 ![Configuración](capturas/reloj%20y%20emulador%20emparejados.PNG)
