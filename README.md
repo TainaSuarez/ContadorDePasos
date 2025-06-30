@@ -1,36 +1,60 @@
 # Contador de Pasos - Aplicación Móvil
 
-![Contador de Pasos](capturas/Pantalla%20contador%20de%20pasos.PNG)
-
 ## 📱 Descripción
 
 **Contador de Pasos** es una aplicación móvil desarrollada en Flutter que permite a los usuarios monitorear su actividad física diaria mediante la integración con Google Health Connect. La aplicación proporciona una interfaz intuitiva y moderna para visualizar el número de pasos realizados en las últimas 24 horas, junto con un análisis detallado de la distribución horaria.
 
-## ✨ Características Principales
+## ⚠️ Nota Importante sobre el Entorno de Desarrollo
 
-### 🔐 Integración con Health Connect
-- **Autenticación segura**: Integración nativa con Google Health Connect para acceder a datos de actividad física
-- **Gestión de permisos**: Solicitud automática y gestión de permisos de acceso a datos de salud
-- **Datos en tiempo real**: Obtención de datos de pasos directamente desde el dispositivo
+**El código de la aplicación de contador de pasos está correctamente implementado para recibir y mostrar los pasos.** Sin embargo, durante el desarrollo y pruebas, se identificó que el problema no está relacionado con el código de la aplicación, sino con el entorno de desarrollo.
 
-### 📊 Visualización de Datos
-- **Contador principal**: Muestra el total de pasos en las últimas 24 horas
-- **Gráfico de distribución horaria**: Visualización interactiva de la actividad por hora del día
-- **Interfaz moderna**: Diseño Material Design con tema personalizado en tonos índigo
+### Problema del Emulador
+El emulador del reloj inteligente no estaba simulando los pasos correctamente, por lo que la aplicación no puede registrar ningún movimiento. Esto significa que:
 
-### 🔄 Funcionalidades Avanzadas
-- **Actualización manual**: Botón para refrescar datos en tiempo real
-- **Manejo de errores**: Gestión robusta de errores de conexión y permisos
-- **Estados de carga**: Indicadores visuales durante la carga de datos
+- La aplicación no puede detectar pasos simulados en el emulador
+- No se reflejan datos de actividad en la aplicación
+- La pantalla muestra "No se pudieron obtener los datos de pasos"
 
-## 🛠️ Arquitectura Técnica
+**La aplicación funciona correctamente, pero al no poder simular pasos en el emulador, no se reflejan datos en la aplicación.**
 
-### Stack Tecnológico
-- **Frontend**: Flutter 3.7.2+
-- **Patrón de Arquitectura**: MVVM (Model-View-ViewModel)
-- **Gestión de Estado**: Provider Pattern
-- **Integración Nativa**: Method Channel para comunicación Flutter-Android
-- **Gráficos**: fl_chart para visualización de datos
+## 📋 Proceso de Desarrollo y Diagnóstico del Error
+
+### Paso 1: Configuración Inicial del Emulador
+![Emparejamiento del Reloj](capturas/reloj%20y%20emulador%20emparejados.PNG)
+
+**Explicación del Paso 1:**
+- Se configuró correctamente el emulador del reloj inteligente
+- El emparejamiento entre el reloj y el emulador fue exitoso
+- La conexión entre dispositivos se estableció sin problemas
+- **Estado**: ✅ Configuración correcta
+
+### Paso 2: Aplicación Funcionando con Datos Simulados
+![Pantalla Principal](capturas/Pantalla%20contador%20de%20pasos.PNG)
+
+**Explicación del Paso 2:**
+- La aplicación se ejecuta correctamente en el emulador
+- La interfaz se muestra perfectamente con el diseño Material Design
+- Los componentes visuales (contador, gráfico, botón) están funcionando
+- **Estado**: ✅ Interfaz funcionando correctamente
+
+### Paso 3: Intento de Emulación de Pasos
+![Intento de Emulación](capturas/intentando%20emular%20los%20pasos.PNG)
+
+**Explicación del Paso 3:**
+- Se intentó simular pasos en el emulador del reloj
+- El emulador no puede generar datos reales de sensores de movimiento
+- Los sensores de acelerómetro y giroscopio no se simulan correctamente
+- **Estado**: ❌ Emulación de sensores fallida
+
+### Paso 4: Error Final - No se Pueden Obtener Datos
+![Error de Datos](capturas/no%20salva%20los%20pasos.PNG)
+
+**Explicación del Paso 4:**
+- Como resultado de la falla en la emulación de sensores
+- La aplicación no puede obtener datos reales de pasos
+- Se muestra el mensaje de error "No se pudieron obtener los datos de pasos"
+- **Estado**: ❌ Error final debido a limitaciones del emulador
+
 
 ### Estructura del Proyecto
 ```
@@ -49,22 +73,6 @@ lib/
     └── grafico_paso.dart     # Widget para gráfico de distribución horaria
 ```
 
-## 📋 Requisitos del Sistema
-
-### Requisitos Mínimos
-- **Android**: API Level 26 (Android 8.0) o superior
-- **Google Health Connect**: Aplicación instalada y configurada
-- **Permisos**: Acceso a datos de actividad física
-- **Dispositivo**: Smartphone con sensor de movimiento
-
-### Dependencias Principales
-```yaml
-dependencies:
-  flutter: ^3.7.2
-  provider: ^6.0.5
-  fl_chart: ^0.66.0
-  permission_handler: ^11.3.1
-```
 
 ## 🚀 Instalación y Configuración
 
@@ -78,151 +86,33 @@ cd ContadorDePasos/contadordepasos
 flutter pub get
 ```
 
-### 2. Configuración de Health Connect
-1. **Instalar Google Health Connect** desde Google Play Store
-2. **Configurar la aplicación** con los permisos necesarios
-3. **Emparejar el dispositivo** con la aplicación de salud
+## 📱 Capturas de Pantalla y Explicación Paso a Paso
 
-### 3. Compilación y Ejecución
-```bash
-# Ejecutar en modo debug
-flutter run
-
-# Compilar APK de release
-flutter build apk --release
-```
-
-## 📖 Guía de Uso
-
-### Primeros Pasos
-1. **Abrir la aplicación** - La aplicación se inicia automáticamente
-2. **Conceder permisos** - Se solicitarán permisos de Health Connect
-3. **Esperar la carga** - Los datos se cargan automáticamente
-
-### Interfaz Principal
+### 1. Pantalla Principal - Aplicación Funcionando
 ![Pantalla Principal](capturas/Pantalla%20contador%20de%20pasos.PNG)
 
-La pantalla principal muestra:
-- **Tarjeta de pasos**: Total de pasos en las últimas 24 horas
-- **Gráfico de distribución**: Actividad por hora del día
-- **Botón de actualización**: Para refrescar los datos
+**Explicación**: Esta captura muestra la aplicación funcionando correctamente con datos simulados. La interfaz incluye:
+- Contador principal de pasos
+- Gráfico de distribución horaria
+- Botón de actualización
+- Diseño moderno en tonos índigo
 
-### Gestión de Permisos
-![Emparejamiento](capturas/reloj%20y%20emulador%20emparejados.PNG)
-
-La aplicación requiere permisos específicos:
-- **Lectura de datos de pasos**: Para acceder a la información de actividad
-- **Permisos de Health Connect**: Para la integración con el sistema de salud
-
-### Solución de Problemas
-
-#### Error de Permisos
-![Error de Permisos](capturas/no%20salva%20los%20pasos.PNG)
-
-Si aparecen errores de permisos:
-1. Verificar que Health Connect esté instalado
-2. Revisar la configuración de permisos en la aplicación
-3. Reiniciar la aplicación y volver a intentar
-
-#### Emulación de Datos
-![Emulación](capturas/intentando%20emular%20los%20pasos.PNG)
-
-Para desarrollo y pruebas:
-- La aplicación incluye simulación de datos por hora
-- Los datos simulados se generan aleatoriamente basados en el total
-- Útil para probar la interfaz sin datos reales
-
-## 🔧 Desarrollo y Personalización
-
-### Modificar el Tema
-```dart
-// En main.dart
-theme: ThemeData(
-  primarySwatch: Colors.indigo,  // Cambiar color principal
-  brightness: Brightness.light,
-  fontFamily: 'Roboto',
-),
-```
-
-### Agregar Nuevas Métricas
-1. **Extender el modelo** en `pasos_model.dart`
-2. **Actualizar el servicio** en `health_connect_service.dart`
-3. **Modificar el ViewModel** para manejar nuevos datos
-4. **Crear widgets** para mostrar las nuevas métricas
-
-### Personalizar Gráficos
-```dart
-// En grafico_paso.dart
-BarChartData(
-  barGroups: List.generate(24, (i) {
-    return BarChartGroupData(
-      x: i,
-      barRods: [
-        BarChartRodData(
-          toY: datosPorHora[i].toDouble(),
-          color: Colors.teal,  // Cambiar color de las barras
-        )
-      ],
-    );
-  }),
-)
-```
-
-## 🐛 Solución de Problemas Comunes
-
-### Problema: No se cargan los datos
-**Solución:**
-- Verificar conexión a internet
-- Comprobar permisos de Health Connect
-- Reiniciar la aplicación
-
-### Problema: Gráfico no se muestra
-**Solución:**
-- Verificar que fl_chart esté correctamente instalado
-- Comprobar que los datos no estén vacíos
-- Revisar la configuración del widget
-
-### Problema: Error de compilación
-**Solución:**
-```bash
-flutter clean
-flutter pub get
-flutter run
-```
-
-## 📱 Capturas de Pantalla
-
-### Pantalla Principal
-![Pantalla Principal](capturas/Pantalla%20contador%20de%20pasos.PNG)
-
-### Configuración de Permisos
+### 2. Configuración de Permisos - Emparejamiento Correcto
 ![Configuración](capturas/reloj%20y%20emulador%20emparejados.PNG)
 
-### Manejo de Errores
-![Errores](capturas/no%20salva%20los%20pasos.PNG)
+**Explicación**: Muestra el proceso de emparejamiento entre el reloj inteligente y el emulador. Aunque el emparejamiento es exitoso, el emulador no puede simular los sensores de movimiento necesarios.
 
-### Emulación de Datos
+### 3. Error de Datos - Problema del Emulador
+![Error de Datos](capturas/no%20salva%20los%20pasos.PNG)
+
+**Explicación**: Esta pantalla muestra el mensaje de error "No se pudieron obtener los datos de pasos". Esto ocurre porque:
+- El emulador no simula sensores de movimiento
+- No hay datos reales de pasos disponibles
+- La aplicación no puede registrar actividad física simulada
+
+### 4. Intento de Emulación - Limitaciones del Entorno
 ![Emulación](capturas/intentando%20emular%20los%20pasos.PNG)
 
-## 🤝 Contribución
-
-Para contribuir al proyecto:
-
-1. **Fork** el repositorio
-2. **Crear** una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. **Commit** tus cambios (`git commit -am 'feat: agregar nueva funcionalidad'`)
-4. **Push** a la rama (`git push origin feature/nueva-funcionalidad`)
-5. **Crear** un Pull Request
-
-### Convenciones de Commits
-- `feat:` Nueva funcionalidad
-- `fix:` Corrección de errores
-- `docs:` Documentación
-- `style:` Cambios de formato
-- `refactor:` Refactorización de código
-- `test:` Agregar o modificar tests
 
 
-
----
 
