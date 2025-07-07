@@ -113,31 +113,33 @@ class _PasosViewState extends State<PasosView> {
       );
     }
 
-    return Column(
-      children: [
-        PasoCard(
-          titulo: "Pasos en las últimas 24h",
-          valor: "${vm.registro!.cantidad_pasos}",
-          icono: Icons.directions_walk,
-          color: Colors.indigo,
-        ),
-        SizedBox(height: 24),
-        Text(
-          "Distribución por hora",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-        ),
-        SizedBox(height: 8),
-        SizedBox(height: 200, child: GraficoPasos(datosPorHora: vm.pasosxhora)),
-        SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: () => vm.cargarlospasos(),
-          child: Text("Actualizar Datos"),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.indigo,
-            foregroundColor: Colors.white,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          PasoCard(
+            titulo: "Pasos en las últimas 24h",
+            valor: "${vm.registro!.cantidad_pasos}",
+            icono: Icons.directions_walk,
+            color: Colors.indigo,
           ),
-        ),
-      ],
+          SizedBox(height: 24),
+          Text(
+            "Distribución por hora",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+          SizedBox(height: 8),
+          SizedBox(height: 200, child: GraficoPasos(datosPorHora: vm.pasosxhora)),
+          SizedBox(height: 24),
+          ElevatedButton(
+            onPressed: () => vm.cargarlospasos(),
+            child: Text("Actualizar Datos"),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.indigo,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
