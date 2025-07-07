@@ -1,11 +1,10 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import '../model/pasos_model.dart';
-import '../services/health_connect_service.dart';
 
+import 'package:health/health.dart';
 
 class PasosViewmodel extends ChangeNotifier {
-  final _service = HealthConnectService();
+  final _health = Health();
   RegistrarlosPasos? registro;
   List<int> pasosxhora = List.filled(24, 0);
   bool isLoading = false;
@@ -21,24 +20,52 @@ class PasosViewmodel extends ChangeNotifier {
     try {
       
       if (!permisosSolicitados) {
-        final permisosConcedidos = await _service.solicitarPermisos();
-        permisosSolicitados = true;
-        
-        if (!permisosConcedidos) {
-          errorMessage = "Se requieren permisos de Health Connect para acceder a los datos de pasos";
+        print('Solicitando permisos de Health Connect...');
+        try {
+          final types = [HealthDataType.STEPS];
+          final permissions = [HealthDataAccess.READ];
+          final permisosConcedidos = await _health.requestAuthorization(types, permissions: permissions);
+          print('Permisos concedidos: $permisosConcedidos');
+          permisosSolicitados = true;
+          if (!permisosConcedidos) {
+            errorMessage = "Se requieren permisos de Health Connect para acceder a los datos de pasos";
+            print('Permisos NO concedidos.');
+            isLoading = false;
+            notifyListeners();
+            return;
+          }
+        } catch (e) {
+          errorMessage = "Error al solicitar permisos: $e";
+          print('Error al solicitar permisos: $e');
           isLoading = false;
           notifyListeners();
           return;
         }
       }
 
-      final resultado = await _service.obtenerPasos24h();
-      if (resultado != null) {
-         registro = resultado;
-        _simularpasosxhora(resultado.cantidad_pasos);
+      final now = DateTime.now();
+      final start = now.subtract(const Duration(hours: 24));
+      try {
+        final types = [HealthDataType.STEPS];
+        final stepsData = await _health.getHealthDataFromTypes(
+          types: types,
+          startTime: start,
+          endTime: now,
+        );
+        int totalSteps = 0;
+        for (var data in stepsData) {
+          if (data.type == HealthDataType.STEPS && data.value is num) {
+            totalSteps += (data.value as num).toInt();
+          }
+        }
+        registro = RegistrarlosPasos(
+          cantidad_pasos: totalSteps,
+          fechainicio: start,
+          fechafin: now,
+        );
         errorMessage = null;
-      } else {
-        errorMessage = "No se pudieron obtener los datos de pasos";
+      } catch (e) {
+        errorMessage = "No se pudieron obtener los datos de pasos: $e";
       }
     } catch (e) {
       errorMessage = "Error al cargar los datos: $e";
@@ -48,10 +75,6 @@ class PasosViewmodel extends ChangeNotifier {
     }
   }
 
-  void _simularpasosxhora (int total) {
-    final random = Random();
-    pasosxhora = List.generate(24, (_) => random.nextInt(total ~/ 10));
-  }
 
   }
 

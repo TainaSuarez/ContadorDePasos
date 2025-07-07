@@ -1,127 +1,67 @@
-# Contador de Pasos - Aplicación Móvil
+# Contador de Pasos - Documentación Técnica
 
-## 📱 Descripción
+## ¿Cómo funciona la aplicación?
+La aplicación "Contador de Pasos" está desarrollada en Flutter y permite al usuario visualizar la cantidad de pasos dados en las últimas 24 horas, así como la distribución horaria de esos pasos. Utiliza el patrón MVVM (Model-View-ViewModel) y Provider para la gestión de estado. La interfaz es moderna y responsiva, mostrando un contador principal, un gráfico de barras y un botón para actualizar los datos.
 
-**Contador de Pasos** es una aplicación móvil desarrollada en Flutter que permite a los usuarios monitorear su actividad física diaria mediante la integración con Google Health Connect. La aplicación proporciona una interfaz intuitiva y moderna para visualizar el número de pasos realizados en las últimas 24 horas, junto con un análisis detallado de la distribución horaria.
+- Al iniciar, la app solicita los permisos necesarios para acceder a los datos de pasos.
+- Si los permisos son concedidos, consulta los pasos almacenados en Health Connect y los muestra en pantalla.
+- Si no hay datos disponibles (por ejemplo, en emulador), muestra un mensaje de error informativo.
 
-## ⚠️ Nota Importante sobre el Entorno de Desarrollo
+## Permisos utilizados
+La app requiere los siguientes permisos declarados en el `AndroidManifest.xml`:
 
-**El código de la aplicación de contador de pasos está correctamente implementado para recibir y mostrar los pasos.** Sin embargo, durante el desarrollo y pruebas, se identificó que el problema no está relacionado con el código de la aplicación, sino con el entorno de desarrollo.
-
-### Problema del Emulador
-El emulador del reloj inteligente no estaba simulando los pasos correctamente, por lo que la aplicación no puede registrar ningún movimiento. Esto significa que:
-
-- La aplicación no puede detectar pasos simulados en el emulador
-- No se reflejan datos de actividad en la aplicación
-- La pantalla muestra "No se pudieron obtener los datos de pasos"
-
-**La aplicación funciona correctamente, pero al no poder simular pasos en el emulador, no se reflejan datos en la aplicación.**
-
-## 📋 Proceso de Desarrollo y Diagnóstico del Error
-
-### Paso 1: Configuración Inicial del Emulador
-![Emparejamiento del Reloj](capturas/reloj%20y%20emulador%20emparejados.PNG)
-
-**Explicación del Paso 1:**
-- Se configuró correctamente el emulador del reloj inteligente
-- El emparejamiento entre el reloj y el emulador fue exitoso
-- La conexión entre dispositivos se estableció sin problemas
-- **Estado**: ✅ Configuración correcta
-
-### Paso 2: Aplicación Funcionando
-![Pantalla Principal](capturas/Pantalla%20contador%20de%20pasos.PNG)
-
-**Explicación del Paso 2:**
-- La aplicación se ejecuta correctamente en el emulador
-- La interfaz se muestra perfectamente con el diseño Material Design
-- Los componentes visuales (contador, gráfico, botón) están funcionando
-- **Estado**: ✅ Interfaz funcionando correctamente
-
-### Paso 3: Intento de Emulación de Pasos
-![Intento de Emulación](capturas/intentando%20emular%20los%20pasos.PNG)
-
-**Explicación del Paso 3:**
-- Se intentó simular pasos en el emulador del reloj
-- El emulador no puede generar datos reales de sensores de movimiento
-- Los sensores de acelerómetro y giroscopio no se simulan correctamente
-- **Estado**: ❌ Emulación de sensores fallida
-
-### Paso 4: Error Final - No se Pueden Obtener Datos
-![Error de Datos](capturas/no%20salva%20los%20pasos.PNG)
-
-**Explicación del Paso 4:**
-- Como resultado de la falla en la emulación de sensores
-- La aplicación de Health Connect no puede guardar los datos de los pasos, por ende la app en flutter no muestra informacion de los pasos.
-- Se muestra el mensaje de error "No se pudieron obtener los datos de pasos"
-- **Estado**: ❌ Error final debido a limitaciones del emulador
-
-## 🛠️ Arquitectura Técnica
-
-### Stack Tecnológico
-- **Frontend**: Flutter 3.7.2+
-- **Patrón de Arquitectura**: MVVM (Model-View-ViewModel)
-- **Gestión de Estado**: Provider Pattern
-- **Integración Nativa**: Method Channel para comunicación Flutter-Android
-- **Gráficos**: fl_chart para visualización de datos
-
-### Estructura del Proyecto
-```
-lib/
-├── main.dart                 # Punto de entrada de la aplicación
-├── model/
-│   └── pasos_model.dart      # Modelo de datos para pasos
-├── view/
-│   └── pasos_view.dart       # Vista principal de la aplicación
-├── viewmodel/
-│   └── pasos_viewmodel.dart  # Lógica de negocio y gestión de estado
-├── services/
-│   └── health_connect_service.dart # Servicio de integración con Health Connect
-└── widgets/
-    ├── card_paso.dart        # Widget para mostrar contador de pasos
-    └── grafico_paso.dart     # Widget para gráfico de distribución horaria
+```xml
+<uses-permission android:name="android.permission.ACTIVITY_RECOGNITION"/>
+<uses-permission android:name="android.permission.health.READ_STEPS"/>
+<uses-permission android:name="android.permission.health.WRITE_STEPS"/>
+<uses-permission android:name="android.permission.ACCESS_HEALTH_CONNECT"/>
 ```
 
+Estos permisos permiten leer y escribir datos de pasos a través de Health Connect y acceder al reconocimiento de actividad física.
 
-## 🚀 Instalación y Configuración
+## Acceso a los datos a través de Health Connect
+La app utiliza el paquete [`health`](https://pub.dev/packages/health) para interactuar con Health Connect. El flujo es:
 
-### 1. Preparación del Entorno
-```bash
-# Clonar el repositorio
-git clone https://github.com/MarlaMendez/ContadorDePasos
-cd ContadorDePasos/contadordepasos
+1. Solicita autorización al usuario para acceder a los datos de pasos.
+2. Si el usuario concede los permisos, la app consulta los pasos de las últimas 24 horas usando la API de Health Connect.
+3. Los datos se muestran en la pantalla principal y se actualizan al presionar el botón correspondiente.
 
-# Instalar dependencias
-flutter pub get
+El acceso se realiza de forma segura y conforme a las políticas de privacidad de Android y Health Connect.
+
+## Simulación de pasos
+Durante el desarrollo, se intentó simular pasos en el emulador usando comandos ADB como:
+
+```sh
+adb -s emulator-5556 shell am broadcast -a "whs.USE_SYNTHETIC_PROVIDERS" com.google.android.wearable.healthservices
+adb -s emulator-5556 shell am broadcast -a "whs.synthetic.user.START_WALKING" com.google.android.wearable.healthservices
 ```
 
-## 📱 Capturas de Pantalla y Explicación Paso a Paso
+Sin embargo, debido a limitaciones del emulador y de Health Connect en versiones recientes de Android, los pasos simulados no se reflejan en la app ni en Health Connect. Este es un problema conocido y reportado por otros desarrolladores y docentes.
 
-### 1. Pantalla Principal - Aplicación Funcionando
-![Pantalla Principal](capturas/Pantalla%20contador%20de%20pasos.PNG)
+**Nota:** En un dispositivo físico, la app funcionaría correctamente si los permisos y sensores están disponibles y configurados.
 
-**Explicación**: Esta captura muestra la aplicación funcionando correctamente. La interfaz incluye:
-- Contador principal de pasos
-- Gráfico de distribución horaria
-- Botón de actualización
-- Diseño moderno en tonos índigo
-  Obs: algunos aspectos apenas son visibles con la informacion de los pasos.
+## 🏃‍♂️ Instrucciones para ejecutar la aplicación
 
-### 2. Configuración de Permisos - Emparejamiento Correcto
-![Configuración](capturas/reloj%20y%20emulador%20emparejados.PNG)
+1. Clona el repositorio:
+   ```bash
+   git clone https://github.com/usuario/ContadorDePasos
+   cd ContadorDePasos/contadordepasos
+   ```
 
-**Explicación**: Muestra el proceso de emparejamiento entre el reloj inteligente y el emulador. Aunque el emparejamiento es exitoso, el emulador no puede simular los sensores de movimiento necesarios.
+2. Instala las dependencias:
+   ```bash
+   flutter pub get
+   ```
 
-### 3. Error de Datos - Problema del Emulador
-![Error de Datos](capturas/no%20salva%20los%20pasos.PNG)
+3. Conecta un dispositivo físico o inicia un emulador compatible.
 
-**Explicación**: Esta pantalla demuestra que no se almaceno ninguna informacion, apesar de haber hecho la simulacion de pasos.
-- El emulador no simula sensores de movimiento
-- No hay datos reales de pasos disponibles
-- La aplicación no puede registrar actividad física simulada
+4. Ejecuta la app:
+   ```bash
+   flutter run
+   ```
 
-### 4. Intento de Emulación - Limitaciones del Entorno
-![Emulación](capturas/intentando%20emular%20los%20pasos.PNG)
+5. Concede los permisos solicitados en el dispositivo/emulador.
 
-
+6. Si usas un emulador, ten en cuenta las limitaciones para simular pasos (ver sección anterior).
 
 

@@ -1,34 +1,36 @@
-import 'package:flutter/services.dart';
+import 'package:health/health.dart';
 import '../model/pasos_model.dart';
 
 
 class HealthConnectService {
-  static const platform = MethodChannel('com.example.contador_pasos/pasos');
+  final Health _health = Health();
 
   Future<bool> solicitarPermisos() async {
-    try {
-      final result = await platform.invokeMethod('solicitarPermisos');
-      return result == true;
-    } catch (e) {
-      print('Error al solicitar permisos: $e');
-      return false;
-    }
+    final types = [HealthDataType.STEPS];
+    final permissions = [HealthDataAccess.READ];
+    return await _health.requestAuthorization(types, permissions: permissions);
   }
 
   Future<RegistrarlosPasos?> obtenerPasos24h() async {
+    final now = DateTime.now();
+    final start = now.subtract(const Duration(hours: 24));
     try {
-      // Primero solicitar permisos
-      final permisosConcedidos = await solicitarPermisos();
-      if (!permisosConcedidos) {
-        print('Permisos no concedidos para Health Connect');
-        return null;
+      final types = [HealthDataType.STEPS];
+      final stepsData = await _health.getHealthDataFromTypes(
+        types: types,
+        startTime: start,
+        endTime: now,
+      );
+      int totalSteps = 0;
+      for (var data in stepsData) {
+        if (data.type == HealthDataType.STEPS && data.value is num) {
+          totalSteps += (data.value as num).toInt();
+        }
       }
-
-      final result = await platform.invokeMethod('getpasos24h');
       return RegistrarlosPasos(
-        cantidad_pasos: result['cantidad_pasos'],
-        fechainicio: DateTime.parse(result['inicio']), 
-        fechafin: DateTime.parse(result['fin'])
+        cantidad_pasos: totalSteps,
+        fechainicio: start,
+        fechafin: now,
       );
     } catch (e) {
       print('No se pudieron obtener los pasos: $e');
